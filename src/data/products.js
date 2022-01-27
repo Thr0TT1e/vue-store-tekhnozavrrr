@@ -7,6 +7,7 @@ export default [
     title: 'Радионяня Motorola MBP16',
     price: 3690,
     image: './img/radio.jpg',
+    colors: ['#73B6EA', '#8BE000', '#000',],
   },
   {
     id: uuidv4(),
@@ -35,6 +36,7 @@ export default [
     title: 'Смартфон Xiaomi Mi A3 4/64GB Android One',
     price: 14960,
     image: './img/phone-2.jpg',
+    colors: ['#73B6EA', '#8BE000', '#000',],
   },
   {
     id: uuidv4(),
@@ -49,6 +51,7 @@ export default [
     title: 'Электрический дрифт-карт Razor Crazy Cart',
     price: 39900,
     image: './img/bicycle.jpg',
+    colors: ['#73B6EA', '#8BE000', '#000',],
   },
   {
     id: uuidv4(),

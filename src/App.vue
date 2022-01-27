@@ -10,12 +10,21 @@
     </div>
 
     <div class="content__catalog">
-      <ProductFilter />
+      <ProductFilter
+          v-model:price-from="filterPriceFrom"
+          v-model:price-to="filterPriceTo"
+          v-model:category-id="filterCategoryId"
+          v-model:select-color="filterColor"
+      />
 
       <section class="catalog">
         <ProductList :products="products"/>
 
-        <BasePagination v-model:page="page" :count="countProducts" :per-page="productPerPage" />
+        <BasePagination
+            v-model:page="page"
+            :count="countProducts"
+            :per-page="productPerPage"
+        />
       </section>
 
     </div>
@@ -38,6 +47,7 @@ export default {
       filterPriceFrom: 0,
       filterPriceTo: 0,
       filterCategoryId: 0,
+      filterColor: ''
     }
   },
   
@@ -55,7 +65,7 @@ export default {
     },
 
     countProducts() {
-      return products.length
+      return this.filterProducts.length
     },
 
     filterProducts() {
@@ -63,7 +73,6 @@ export default {
 
       if (this.filterPriceFrom > 0) {
         filterProducts = filterProducts.filter(product => product.price >= this.filterPriceFrom)
-        console.log("-> filterProducts", filterProducts);
       }
 
       if (this.filterPriceTo > 0) {
@@ -72,6 +81,12 @@ export default {
 
       if (this.filterCategoryId) {
         filterProducts = filterProducts.filter(product => product.categoryId === this.filterCategoryId)
+      }
+
+      if (this.filterColor) {
+        filterProducts = filterProducts.filter(product => {
+          if (product.colors && product.colors.includes(this.filterColor)) return product
+        })
       }
 
       return filterProducts

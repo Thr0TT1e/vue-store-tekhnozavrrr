@@ -6,11 +6,35 @@
       <fieldset class="form__block">
         <legend class="form__legend">Цена</legend>
         <label class="form__label form__label--price">
-          <input class="form__input" type="text" name="min-price" value="0">
+<!--          <input-->
+<!--              class="form__input"-->
+<!--              type="text"-->
+<!--              name="min-price"-->
+<!--              :value="priceFrom"-->
+<!--              @input="emitPriceFrom($event)"-->
+<!--          >-->
+          <input
+              class="form__input"
+              type="text"
+              name="min-price"
+              v-model.number="currentPriceFrom"
+          >
           <span class="form__value">От</span>
         </label>
         <label class="form__label form__label--price">
-          <input class="form__input" type="text" name="max-price" value="12345">
+<!--          <input-->
+<!--              class="form__input"-->
+<!--              type="text"-->
+<!--              name="max-price"-->
+<!--              :value="priceTo"-->
+<!--              @input="emitPriceTo($event)"-->
+<!--          >-->
+          <input
+              class="form__input"
+              type="text"
+              name="max-price"
+              v-model.number="currentPriceTo"
+          >
           <span class="form__value">До</span>
         </label>
       </fieldset>
@@ -18,11 +42,22 @@
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
-          <select class="form__select" type="text" name="category">
-            <option value="value1">Все категории</option>
-            <option value="value2">Зубные щетки</option>
-            <option value="value3">Телефоны</option>
-            <option value="value4">Спортинвентарь</option>
+<!--          <select-->
+<!--              class="form__select"-->
+<!--              name="category"-->
+<!--              @input="emitCategoryId($event)"-->
+<!--          >-->
+          <select
+              class="form__select"
+              name="category"
+              v-model.number="currentCategoryId"
+          >
+            <option value="0">Все категории</option>
+            <option
+                :value="category.id"
+                v-for="category in categoryList"
+                :key="category.id"
+            >{{ category.title }}</option>
           </select>
         </label>
       </fieldset>
@@ -30,49 +65,25 @@
       <fieldset class="form__block">
         <legend class="form__legend">Цвет</legend>
         <ul class="colors">
-          <li class="colors__item">
+          <li
+              class="colors__item"
+              v-for="color in colorList"
+              :key="color.id"
+          >
             <label class="colors__label">
-              <input class="colors__radio sr-only" type="radio" name="color" value="#73B6EA" checked="">
-              <span class="colors__value" style="background-color: #73B6EA;">
+              <input
+                  class="colors__radio sr-only"
+                  type="radio"
+                  name="color"
+                  :value="color.color"
+                  v-model="currentColor"
+              >
+              <span
+                  class="colors__value"
+                  :style="`background-color: ${color.color};`"
+              >
                   </span>
             </label>
-          </li>
-          <li class="colors__item">
-            <label class="colors__label">
-              <input class="colors__radio sr-only" type="radio" name="color" value="#FFBE15">
-              <span class="colors__value" style="background-color: #FFBE15;">
-                  </span>
-            </label>
-          </li>
-          <li class="colors__item">
-            <label class="colors__label">
-              <input class="colors__radio sr-only" type="radio" name="color" value="#939393">
-              <span class="colors__value" style="background-color: #939393;">
-                </span></label>
-          </li>
-          <li class="colors__item">
-            <label class="colors__label">
-              <input class="colors__radio sr-only" type="radio" name="color" value="#8BE000">
-              <span class="colors__value" style="background-color: #8BE000;">
-                </span></label>
-          </li>
-          <li class="colors__item">
-            <label class="colors__label">
-              <input class="colors__radio sr-only" type="radio" name="color" value="#FF6B00">
-              <span class="colors__value" style="background-color: #FF6B00;">
-                </span></label>
-          </li>
-          <li class="colors__item">
-            <label class="colors__label">
-              <input class="colors__radio sr-only" type="radio" name="color" value="#FFF">
-              <span class="colors__value" style="background-color: #FFF;">
-                </span></label>
-          </li>
-          <li class="colors__item">
-            <label class="colors__label">
-              <input class="colors__radio sr-only" type="radio" name="color" value="#000">
-              <span class="colors__value" style="background-color: #000;">
-                </span></label>
           </li>
         </ul>
       </fieldset>
@@ -137,10 +148,18 @@
         </ul>
       </fieldset>
 
-      <button class="filter__submit button button--primery" type="submit">
+      <button
+          class="filter__submit button button--primery"
+          type="submit"
+          @click.prevent="submitFilter"
+      >
         Применить
       </button>
-      <button class="filter__reset button button--second" type="button">
+      <button
+          class="filter__reset button button--second"
+          type="button"
+          @click.prevent="resetFilter"
+      >
         Сбросить
       </button>
     </form>
@@ -148,8 +167,75 @@
 </template>
 
 <script>
+import categories from '@/data/categories';
+import colors from '@/data/colors';
+
 export default {
   name: 'ProductFilter',
+
+  props: ['priceFrom', 'priceTo', 'categoryId', 'selectColor'],
+
+  data() {
+    return {
+      currentPriceFrom:  0,
+      currentPriceTo:    0,
+      currentCategoryId: 0,
+      currentColor: '',
+    }
+  },
+
+  // emits: ['update:priceFrom', 'update:priceTo', 'update:categoryId'],
+
+  computed: {
+    categoryList() {
+      return categories
+    },
+
+    colorList() {
+      return colors
+    },
+  },
+
+  watch: {
+    priceFrom(value) {
+      this.currentPriceFrom  = value
+    },
+
+    priceTo(value) {
+      this.currentPriceTo    = value
+    },
+
+    categoryId(value) {
+      this.currentCategoryId = value
+    },
+  },
+
+  methods: {
+    submitFilter() {
+      this.$emit('update:priceFrom', this.currentPriceFrom)
+      this.$emit('update:priceTo', this.currentPriceTo)
+      this.$emit('update:categoryId', this.currentCategoryId)
+      this.$emit('update:selectColor', this.currentColor)
+    },
+
+    resetFilter() {
+      this.$emit('update:priceFrom', 0)
+      this.$emit('update:priceTo', 0)
+      this.$emit('update:categoryId', 0)
+      this.$emit('update:selectColor', '')
+    },
+    // emitPriceFrom(event) {
+    //   this.$emit('update:priceFrom', +event.target.value)
+    // },
+    //
+    // emitPriceTo(event) {
+    //   this.$emit('update:priceTo', +event.target.value)
+    // },
+    //
+    // emitCategoryId(event) {
+    //   this.$emit('update:categoryId', +event.target.value)
+    // },
+  },
 }
 </script>
 
