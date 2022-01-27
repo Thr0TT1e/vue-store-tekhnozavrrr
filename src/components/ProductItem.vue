@@ -2,7 +2,11 @@
   <li
       class="catalog__item"
   >
-    <a class="catalog__pic" href="#">
+    <a
+        class="catalog__pic"
+        href="#"
+        @click.prevent="$emit('gotoPage', 'product', {id: product.id})"
+    >
       <img
           :src="product.image"
           srcset="img/radio@2x.jpg 2x"
@@ -16,7 +20,7 @@
       </a>
     </h3>
     
-    <span class="catalog__price">{{ product.price }} ₽</span>
+    <span class="catalog__price">{{ product.price.toLocaleString('ru-RU') }} ₽</span>
     
     <ul class="colors colors--black">
       <li class="colors__item">
@@ -64,10 +68,10 @@ export default {
   name: 'ProductItem',
   
   props: ['product'],
-
+  
   data() {
     return {
-      color: '#73B6EA'
+      color: '#73B6EA',
     }
   },
 }
