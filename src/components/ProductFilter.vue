@@ -6,13 +6,6 @@
       <fieldset class="form__block">
         <legend class="form__legend">Цена</legend>
         <label class="form__label form__label--price">
-<!--          <input-->
-<!--              class="form__input"-->
-<!--              type="text"-->
-<!--              name="min-price"-->
-<!--              :value="priceFrom"-->
-<!--              @input="emitPriceFrom($event)"-->
-<!--          >-->
           <input
               class="form__input"
               type="text"
@@ -22,13 +15,6 @@
           <span class="form__value">От</span>
         </label>
         <label class="form__label form__label--price">
-<!--          <input-->
-<!--              class="form__input"-->
-<!--              type="text"-->
-<!--              name="max-price"-->
-<!--              :value="priceTo"-->
-<!--              @input="emitPriceTo($event)"-->
-<!--          >-->
           <input
               class="form__input"
               type="text"
@@ -184,8 +170,6 @@ export default {
     }
   },
 
-  // emits: ['update:priceFrom', 'update:priceTo', 'update:categoryId'],
-
   computed: {
     categoryList() {
       return categories
@@ -216,6 +200,7 @@ export default {
       this.$emit('update:priceTo', this.currentPriceTo)
       this.$emit('update:categoryId', this.currentCategoryId)
       this.$emit('update:selectColor', this.currentColor)
+      this.$emit('pageOne', 1)
     },
 
     resetFilter() {
@@ -224,17 +209,6 @@ export default {
       this.$emit('update:categoryId', 0)
       this.$emit('update:selectColor', '')
     },
-    // emitPriceFrom(event) {
-    //   this.$emit('update:priceFrom', +event.target.value)
-    // },
-    //
-    // emitPriceTo(event) {
-    //   this.$emit('update:priceTo', +event.target.value)
-    // },
-    //
-    // emitCategoryId(event) {
-    //   this.$emit('update:categoryId', +event.target.value)
-    // },
   },
 }
 </script>

@@ -15,6 +15,7 @@
           v-model:price-to="filterPriceTo"
           v-model:category-id="filterCategoryId"
           v-model:select-color="filterColor"
+          @page-one="page = $event"
       />
       
       <section class="catalog">
