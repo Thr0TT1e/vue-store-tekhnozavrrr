@@ -223,11 +223,9 @@ import categories from '@/data/categories.js';
 export default {
   name: 'ProductPage',
   
-  props: ['pageParams'],
-  
   computed: {
     product() {
-      return products.find(product => product.id === this.pageParams.id)
+      return products.find(product => product.id === this.$route.params.id)
     },
     
     category() {
