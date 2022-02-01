@@ -18,7 +18,7 @@
         Корзина
       </h1>
       <span class="content__info">
-        3 товара
+        {{ products.length }} товара
       </span>
     </div>
 
@@ -26,60 +26,11 @@
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
           <ul class="cart__list">
-            <li
-                class="cart__item product"
+            <CartItem
                 v-for="item in products"
                 :key="item.productId"
-            >
-              <div class="product__pic">
-                <img
-                    :src="item.product.image"
-                    width="120"
-                    height="120"
-                    srcset="img/phone-square-3@2x.jpg 2x"
-                    :alt="item.product.title"
-                >
-              </div>
-              <h3 class="product__title">
-                {{ item.product.title }}
-              </h3>
-              <p class="product__info">
-                Объем: <span>128GB</span>
-              </p>
-              <span class="product__code">
-                Артикул: {{ item.product.id }}
-              </span>
-
-              <div class="product__counter form__counter">
-                <button
-                    type="button"
-                    aria-label="Убрать один товар"
-
-                >
-                  <svg width="10" height="10" fill="currentColor">
-                    <use xlink:href="#icon-minus"></use>
-                  </svg>
-                </button>
-
-                <input type="text" :value="item.amount" name="count">
-
-                <button type="button" aria-label="Добавить один товар">
-                  <svg width="10" height="10" fill="currentColor">
-                    <use xlink:href="#icon-plus"></use>
-                  </svg>
-                </button>
-              </div>
-
-              <b class="product__price">
-                {{ (item.amount * item.product.price).toLocaleString() }} ₽
-              </b>
-
-              <button class="product__del button-del" type="button" aria-label="Удалить товар из корзины">
-                <svg width="20" height="20" fill="currentColor">
-                  <use xlink:href="#icon-close"></use>
-                </svg>
-              </button>
-            </li>
+                :item="item"
+            />
           </ul>
         </div>
 
@@ -101,26 +52,22 @@
 </template>
 
 <script>
+import CartItem from '@/components/CartItem.vue';
+
 import { mapGetters } from 'vuex';
 
 export default {
   name: 'CartPage',
+  
+  components: {
+    CartItem
+  },
 
   computed: {
     ...mapGetters({
       products: 'cartDetailsProduct',
       totalPrice: 'cartTotalPrice'
     }),
-  },
-
-  methods: {
-    increment() {
-      this.productAmount++
-    },
-
-    decrement() {
-      this.productAmount--
-    },
   },
 }
 </script>
