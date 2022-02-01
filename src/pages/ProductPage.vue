@@ -3,19 +3,17 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#" @click="gotoPage">
-            Каталог
-          </a>
+          <router-link class="breadcrumbs__link" :to="{name: 'Main'}">Каталог</router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#" @click="gotoPage">
+          <router-link class="breadcrumbs__link" :to="{name: 'Main'}">
             {{ category.title }}
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link">
+          <router-link class="breadcrumbs__link" :to="{name: 'Main'}">
             {{ product.title }}
-          </a>
+          </router-link>
         </li>
       </ul>
     </div>
@@ -65,7 +63,7 @@
           {{ product.title }}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST">
+          <form class="form" action="#" method="POST" @submit.prevent="addToCart">
             <b class="item__price">
               {{ product.price.toLocaleString('ru-RU') }} ₽
             </b>
@@ -129,22 +127,36 @@
             
             <div class="item__row">
               <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар">
+                <button
+                    type="button"
+                    aria-label="Убрать один товар"
+                    @click="decrement"
+                >
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-minus"></use>
                   </svg>
                 </button>
                 
-                <input type="text" value="1" name="count">
+                <input
+                    type="text"
+                    v-model.number="productAmount"
+                >
                 
-                <button type="button" aria-label="Добавить один товар">
+                <button
+                    type="button"
+                    aria-label="Добавить один товар"
+                    @click="increment"
+                >
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-plus"></use>
                   </svg>
                 </button>
               </div>
               
-              <button class="button button--primery" type="submit">
+              <button
+                  class="button button--primery"
+                  type="submit"
+              >
                 В корзину
               </button>
             </div>
@@ -222,12 +234,16 @@ import categories from '@/data/categories.js';
 
 export default {
   name: 'ProductPage',
-  
-  props: ['pageParams'],
+
+  data() {
+    return {
+      productAmount: 1,
+    }
+  },
   
   computed: {
     product() {
-      return products.find(product => product.id === this.pageParams.id)
+      return products.find(product => product.id === +this.$route.params.id)
     },
     
     category() {
@@ -238,6 +254,21 @@ export default {
   methods: {
     gotoPage() {
       this.$emit('gotoPage', 'main')
+    },
+
+    increment() {
+      this.productAmount++
+    },
+
+    decrement() {
+      this.productAmount--
+    },
+
+    addToCart() {
+      this.$store.dispatch('addProductToCart', {
+        productId: this.product.id,
+        amount: this.productAmount
+      })
     },
   },
 }

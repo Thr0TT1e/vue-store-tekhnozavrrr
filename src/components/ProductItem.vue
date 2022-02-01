@@ -1,18 +1,20 @@
 <template>
-  <li
-      class="catalog__item"
-  >
-    <a
+  <li class="catalog__item">
+    <router-link
         class="catalog__pic"
-        href="#"
-        @click.prevent="$emit('gotoPage', 'product', {id: product.id})"
+        :to="{
+          name: 'Product',
+          params: {
+            id: product.id
+          }
+        }"
     >
       <img
           :src="product.image"
           srcset="img/radio@2x.jpg 2x"
           :alt="product.title"
       >
-    </a>
+    </router-link>
     
     <h3 class="catalog__title">
       <a href="#">
