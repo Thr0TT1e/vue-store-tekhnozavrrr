@@ -3,19 +3,17 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#" @click="gotoPage">
-            Каталог
-          </a>
+          <router-link class="breadcrumbs__link" :to="{name: 'Main'}">Каталог</router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#" @click="gotoPage">
+          <router-link class="breadcrumbs__link" :to="{name: 'Main'}">
             {{ category.title }}
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link">
+          <router-link class="breadcrumbs__link" :to="{name: 'Main'}">
             {{ product.title }}
-          </a>
+          </router-link>
         </li>
       </ul>
     </div>
@@ -225,7 +223,7 @@ export default {
   
   computed: {
     product() {
-      return products.find(product => product.id === this.$route.params.id)
+      return products.find(product => product.id === +this.$route.params.id)
     },
     
     category() {
