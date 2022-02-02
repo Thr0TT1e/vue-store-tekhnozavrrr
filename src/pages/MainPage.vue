@@ -55,15 +55,15 @@ export default {
   
   data() {
     return {
-      page:             1,
-      productPerPage:   3,
-      filterPriceFrom:  0,
-      filterPriceTo:    0,
-      filterCategoryId: 0,
-      filterColorId:    0,
-      productsData:     null,
-      productLoading:   false,
-      productLoadingFailed:   false,
+      page:                 1,
+      productPerPage:       3,
+      filterPriceFrom:      0,
+      filterPriceTo:        0,
+      filterCategoryId:     0,
+      filterColorId:        0,
+      productsData:         null,
+      productLoading:       false,
+      productLoadingFailed: false,
     }
   },
   
@@ -114,7 +114,7 @@ export default {
   
   methods: {
     loadProducts() {
-      this.productLoading = true
+      this.productLoading       = true
       this.productLoadingFailed = false
       clearTimeout(this.loadProductsTimer)
       this.loadProductsTimer = setTimeout(() => {
