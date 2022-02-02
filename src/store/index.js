@@ -27,6 +27,10 @@ const store = createStore({
     cartTotalPrice(state, getters) {
       return getters.cartDetailsProduct.reduce((acc, item) => acc + item.product.price * item.amount, 0)
     },
+
+    amountProduct(state, getters) {
+      return getters.cartDetailsProduct.reduce((acc, item) => item.amount + acc, 0)
+    },
   },
 
   mutations: {
