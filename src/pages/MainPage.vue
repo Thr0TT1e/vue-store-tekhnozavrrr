@@ -19,7 +19,16 @@
       />
       
       <section class="catalog">
+        
+        <div class="catalog__spiner" v-if="productLoading"><img src="img/svg/25.svg"></div>
+        
+        <div class="catalog__spiner" v-if="productLoadingFailed">
+          Произошла ошибка при загрузке товаров!
+          <button @click.prevent="loadProducts">Попробовать ещё раз</button>
+        </div>
+        
         <ProductList
+            v-else
             :products="products"
             @gotoPage="(pageName, pageParams) => $emit('gotoPage', pageName, pageParams)"
         />
@@ -36,7 +45,6 @@
 </template>
 
 <script>
-import products from '@/data/products.js';
 import ProductList from '@/components/ProductList.vue';
 import BasePagination from '@/components/BasePagination';
 import ProductFilter from '@/components/ProductFilter';
@@ -52,8 +60,10 @@ export default {
       filterPriceFrom:  0,
       filterPriceTo:    0,
       filterCategoryId: 0,
-      filterColor:      '',
+      filterColorId:    0,
       productsData:     null,
+      productLoading:   false,
+      productLoadingFailed:   false,
     }
   },
   
@@ -82,47 +92,54 @@ export default {
     countProducts() {
       return this.productsData ? this.productsData.pagination.total : 0
     },
-    
-    filterProducts() {
-      let filterProducts = products
-      
-      if (this.filterPriceFrom > 0) {
-        filterProducts = filterProducts.filter(product => product.price >= this.filterPriceFrom)
-      }
-      
-      if (this.filterPriceTo > 0) {
-        filterProducts = filterProducts.filter(product => product.price <= this.filterPriceTo)
-      }
-      
-      if (this.filterCategoryId) {
-        filterProducts = filterProducts.filter(product => product.categoryId === this.filterCategoryId)
-      }
-      
-      if (this.filterColor) {
-        filterProducts = filterProducts.filter(product => {
-          if (product.colors && product.colors.includes(this.filterColor)) return product
-        })
-      }
-      
-      return filterProducts
-    },
   },
   
   watch: {
     page() {
       this.loadProducts()
     },
+    
+    filterPriceFrom() {
+      this.loadProducts()
+    },
+    
+    filterPriceTo() {
+      this.loadProducts()
+    },
+    
+    filterCategoryId() {
+      this.loadProducts()
+    },
   },
   
   methods: {
     loadProducts() {
-      axios.get(`https://vue-study.skillbox.cc/api/products?page=${this.page}&limit=${this.productPerPage}`)
-           .then(res => this.productsData = res.data)
+      this.productLoading = true
+      this.productLoadingFailed = false
+      clearTimeout(this.loadProductsTimer)
+      this.loadProductsTimer = setTimeout(() => {
+        axios.get(`${this.API_BASE_URL}/api/products`, {
+          params: {
+            page:       this.page,
+            limit:      this.productPerPage,
+            categoryId: this.filterCategoryId,
+            minPrice:   this.filterPriceFrom,
+            maxPrice:   this.filterPriceTo,
+          },
+        })
+             .then(res => this.productsData = res.data)
+             .catch(() => this.productLoadingFailed = true)
+             .then(() => this.productLoading = false)
+      }, 0)
     },
   },
 }
 </script>
 
 <style scoped>
-
+.catalog__spiner {
+  display:            grid;
+  grid-template-rows: 400px;
+  place-items:        center;
+}
 </style>

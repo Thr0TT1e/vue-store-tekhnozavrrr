@@ -28,11 +28,6 @@
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
-<!--          <select-->
-<!--              class="form__select"-->
-<!--              name="category"-->
-<!--              @input="emitCategoryId($event)"-->
-<!--          >-->
           <select
               class="form__select"
               name="category"
@@ -153,7 +148,7 @@
 </template>
 
 <script>
-import categories from '@/data/categories';
+import axios from 'axios';
 import colors from '@/data/colors';
 
 export default {
@@ -167,12 +162,18 @@ export default {
       currentPriceTo:    0,
       currentCategoryId: 0,
       currentColor: '',
+      
+      categoriesData: null,
     }
   },
-
+  
+  created() {
+    this.loadCategories()
+  },
+  
   computed: {
     categoryList() {
-      return categories
+      return this.categoriesData ? this.categoriesData.items : []
     },
 
     colorList() {
@@ -208,6 +209,11 @@ export default {
       this.$emit('update:priceTo', 0)
       this.$emit('update:categoryId', 0)
       this.$emit('update:selectColor', '')
+    },
+    
+    loadCategories() {
+      axios.get(`${this.API_BASE_URL}/api/productCategories`)
+           .then(res => this.categoriesData = res.data)
     },
   },
 }
