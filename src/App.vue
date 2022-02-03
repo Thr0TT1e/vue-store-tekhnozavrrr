@@ -114,12 +114,26 @@
 
 <script>
 import CartIndicator from '@/components/CartIndicator';
+import { mapActions, mapMutations } from 'vuex';
 
 export default {
   name: 'App',
 
   components: {
     CartIndicator
+  },
+  
+  created() {
+    const userKey =  localStorage.getItem('userAccessKey')
+    
+    if (userKey) this.updateUserKey(userKey)
+    
+    this.fetchLoadCart()
+  },
+  
+  methods: {
+    ...mapActions(['fetchLoadCart']),
+    ...mapMutations(['updateUserKey'])
   },
 }
 </script>

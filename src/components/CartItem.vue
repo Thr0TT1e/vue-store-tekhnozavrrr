@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
+import { mapMutations, mapActions } from 'vuex';
 
 export default {
   name: 'CartItem',
@@ -78,7 +78,7 @@ export default {
       },
       
       set(value) {
-        this.$store.dispatch('changeProductAmount', {
+        this.changeProductAmount({
           productId: this.item.productId,
           amount: value
         })
@@ -88,16 +88,17 @@ export default {
   
   methods: {
     ...mapMutations({deleteProduct: 'deleteProductToCart'}),
+    ...mapActions(['changeProductAmount']),
     
     increment() {
-      this.$store.dispatch('changeProductAmount', {
+      this.changeProductAmount({
         productId: this.item.productId,
         amount: this.item.amount + 1
       })
     },
     
     decrement() {
-      this.$store.dispatch('changeProductAmount', {
+      this.changeProductAmount({
         productId: this.item.productId,
         amount: this.item.amount === 0 ? 0 : this.item.amount - 1
       })

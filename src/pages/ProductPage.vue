@@ -2,7 +2,8 @@
   <main class="content container catalog__spiner" v-if="productLoading"><img src="img/svg/25.svg"></main>
   <main class="content container" v-else-if="productLoadingFailed">
     Произошла ошибка при загрузке товаров!
-    <button @click.prevent="loadProduct">Попробовать ещё раз</button></main>
+    <button @click.prevent="loadProduct">Попробовать ещё раз</button>
+  </main>
   <main class="content container" v-else>
     <div class="content__top">
       <ul class="breadcrumbs">
@@ -160,10 +161,15 @@
               <button
                   class="button button--primery"
                   type="submit"
+                  :disabled="productAddSending"
               >
                 В корзину
               </button>
             </div>
+            
+            <div v-show="productAdded">Товар добавлен в корзину!</div>
+            <div v-show="productAddSending">Добавляем товар в корзину...</div>
+          
           </form>
         </div>
       </div>
@@ -234,6 +240,7 @@
 
 <script>
 import axios from 'axios';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'ProductPage',
@@ -244,6 +251,8 @@ export default {
       productsData:         null,
       productLoading:       false,
       productLoadingFailed: false,
+      productAdded:         false,
+      productAddSending:    false,
     }
   },
   
@@ -258,6 +267,8 @@ export default {
   },
   
   methods: {
+    ...mapActions(['addProductToCart']),
+    
     gotoPage() {
       this.$emit('gotoPage', 'main')
     },
@@ -271,14 +282,21 @@ export default {
     },
     
     addToCart() {
-      this.$store.dispatch('addProductToCart', {
-        productId: this.product.id,
-        amount:    this.productAmount,
-      })
+      this.productAdded      = false
+      this.productAddSending = true
+      
+      this.addProductToCart({
+                              productId: this.product.id,
+                              amount:    this.productAmount,
+                            })
+          .then(() => {
+            this.productAdded      = true
+            this.productAddSending = false
+          })
     },
     
     loadProduct() {
-      this.productLoading = true
+      this.productLoading       = true
       this.productLoadingFailed = false
       
       axios.get(`${this.API_BASE_URL}/api/products/${this.$route.params.id}`)
@@ -293,8 +311,8 @@ export default {
       handler() {
         this.loadProduct()
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 }
 </script>
