@@ -143,8 +143,11 @@
                 </button>
                 
                 <input
-                    type="text"
+                    class="form__input-nostyle"
+                    type="number"
+                    min="0"
                     v-model.number="productAmount"
+                    @input="negativeMeaning($event)"
                 >
                 
                 <button
@@ -278,7 +281,11 @@ export default {
     },
     
     decrement() {
-      this.productAmount--
+      this.productAmount = Math.max(0, this.productAmount - 1)
+    },
+
+    negativeMeaning(event) {
+      this.productAmount = Math.max(0, parseInt(event.target.value))
     },
     
     addToCart() {

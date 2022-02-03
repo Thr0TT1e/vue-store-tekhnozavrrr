@@ -7,7 +7,7 @@
     <svg width="30" height="21" fill="currentColor">
       <use xlink:href="#icon-cart"></use>
     </svg>
-    <span class="header__count" aria-label="Количество товаров">{{ cartDetailsProduct.length }}</span>
+    <span class="header__count" aria-label="Количество товаров">{{ amountTotal }}</span>
   </router-link>
 </template>
 
@@ -16,9 +16,9 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'CartIndicator',
-  
+
   computed: {
-    ...mapGetters(['cartDetailsProduct'])
+    ...mapGetters({amountTotal: 'amountProduct' })
   },
 }
 </script>
