@@ -3,21 +3,21 @@
     <header class="header">
       <div class="header__wrapper container">
         <router-link :to="{name: 'Main'}" class="header__info">Каталог</router-link>
-
+        
         <router-link class="header__logo" :to="{name: 'Main'}">
           <img src="img/svg/logo-tech.svg" alt="Логотип интернет магазина Технозавррр" width="190" height="33">
         </router-link>
-
+        
         <a class="header__tel" href="tel:8 800 600 90 09">
           8 800 600 90 09
         </a>
-
+        
         <CartIndicator/>
       </div>
     </header>
-
+    
     <router-view/>
-
+    
     <footer class="footer">
       <div class="footer__wrapper container">
         <ul class="footer__links">
@@ -47,7 +47,7 @@
             </a>
           </li>
         </ul>
-
+        
         <ul class="footer__social social">
           <li class="social__item">
             <a class="social__link" href="#" aria-label="Вконтакте">
@@ -85,12 +85,12 @@
             </a>
           </li>
         </ul>
-
+        
         <p class="footer__desc">
           Все права на&nbsp;материалы, находящиеся на&nbsp;сайте, охраняются в&nbsp;соответствии с&nbsp;законодательством&nbsp;РФ,
           в&nbsp;том числе об&nbsp;авторском праве и&nbsp;смежных правах.
         </p>
-
+        
         <ul class="footer__data">
           <li>
             <a class="footer__link" href="#" target="_blank" rel="noopener" type="application/pdf">
@@ -103,7 +103,7 @@
             </a>
           </li>
         </ul>
-
+        
         <span class="footer__copyright">
         © 2020 Технозавррр
       </span>
@@ -118,13 +118,13 @@ import { mapActions, mapMutations } from 'vuex';
 
 export default {
   name: 'App',
-
+  
   components: {
-    CartIndicator
+    CartIndicator,
   },
   
   created() {
-    const userKey =  localStorage.getItem('userAccessKey')
+    const userKey = localStorage.getItem('userAccessKey')
     
     if (userKey) this.updateUserKey(userKey)
     
@@ -133,7 +133,7 @@ export default {
   
   methods: {
     ...mapActions(['fetchLoadCart']),
-    ...mapMutations(['updateUserKey'])
+    ...mapMutations(['updateUserKey']),
   },
 }
 </script>

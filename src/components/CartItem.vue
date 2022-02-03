@@ -86,9 +86,9 @@ export default {
       
       set(value) {
         this.changeProductAmount({
-          productId: this.item.productId,
-          amount: value
-        })
+                                   productId: this.item.productId,
+                                   amount:    value,
+                                 })
       },
     },
   },
@@ -99,18 +99,18 @@ export default {
     
     increment() {
       this.changeProductAmount({
-        productId: this.item.productId,
-        amount: this.item.amount + 1
-      })
+                                 productId: this.item.productId,
+                                 amount:    this.item.amount + 1,
+                               })
     },
     
     decrement() {
       this.changeProductAmount({
-        productId: this.item.productId,
-        amount: this.item.amount === 0 ? 0 : this.item.amount - 1
-      })
+                                 productId: this.item.productId,
+                                 amount:    this.item.amount === 0 ? 0 : this.item.amount - 1,
+                               })
     },
-
+    
     negativeMeaning(event) {
       this.amount = Math.max(0, parseInt(event.target.value) || 0)
     },

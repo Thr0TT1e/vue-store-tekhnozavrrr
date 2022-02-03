@@ -16,9 +16,9 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'CartIndicator',
-
+  
   computed: {
-    ...mapGetters({amountTotal: 'amountProduct' })
+    ...mapGetters({amountTotal: 'amountProduct'}),
   },
 }
 </script>

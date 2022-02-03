@@ -13,7 +13,7 @@
           </a>
         </li>
       </ul>
-
+      
       <h1 class="content__title">
         Корзина
       </h1>
@@ -21,7 +21,7 @@
         {{ amountTotal }} товара
       </span>
     </div>
-
+    
     <section class="cart">
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
@@ -33,7 +33,7 @@
             />
           </ul>
         </div>
-
+        
         <div class="cart__block">
           <p class="cart__desc">
             Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе
@@ -41,7 +41,7 @@
           <p class="cart__price">
             Итого: <span>{{ totalPrice.toLocaleString() }} ₽</span>
           </p>
-
+          
           <button class="cart__button button button--primery" type="submit">
             Оформить заказ
           </button>
@@ -60,15 +60,15 @@ export default {
   name: 'CartPage',
   
   components: {
-    CartItem
+    CartItem,
   },
-
+  
   computed: {
     ...mapGetters({
-      products: 'cartDetailsProduct',
-      totalPrice: 'cartTotalPrice',
-      amountTotal: 'amountProduct'
-    }),
+                    products:    'cartDetailsProduct',
+                    totalPrice:  'cartTotalPrice',
+                    amountTotal: 'amountProduct',
+                  }),
   },
 }
 </script>
