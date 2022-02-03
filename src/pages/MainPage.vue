@@ -14,7 +14,7 @@
           v-model:price-from="filterPriceFrom"
           v-model:price-to="filterPriceTo"
           v-model:category-id="filterCategoryId"
-          v-model:select-color="filterColor"
+          v-model:select-color="filterColorId"
           @page-one="page = $event"
       />
       
@@ -110,6 +110,10 @@ export default {
     filterCategoryId() {
       this.loadProducts()
     },
+  
+    filterColorId() {
+      this.loadProducts()
+    },
   },
   
   methods: {
@@ -123,6 +127,7 @@ export default {
             page:       this.page,
             limit:      this.productPerPage,
             categoryId: this.filterCategoryId,
+            colorId:    this.filterColorId,
             minPrice:   this.filterPriceFrom,
             maxPrice:   this.filterPriceTo,
           },

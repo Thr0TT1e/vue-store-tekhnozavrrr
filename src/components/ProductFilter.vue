@@ -149,7 +149,6 @@
 
 <script>
 import axios from 'axios';
-import colors from '@/data/colors';
 
 export default {
   name: 'ProductFilter',
@@ -177,7 +176,7 @@ export default {
     },
 
     colorList() {
-      return colors
+      return this.selectColor
     },
   },
 
