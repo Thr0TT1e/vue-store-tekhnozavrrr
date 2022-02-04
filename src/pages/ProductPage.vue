@@ -281,11 +281,11 @@ export default {
     },
     
     decrement() {
-      this.productAmount = Math.max(0, this.productAmount - 1)
+      this.productAmount = Math.max(1, this.productAmount - 1)
     },
 
     negativeMeaning(event) {
-      this.productAmount = Math.max(0, parseInt(event.target.value))
+      this.productAmount = Math.max(1, parseInt(event.target.value))
     },
     
     addToCart() {

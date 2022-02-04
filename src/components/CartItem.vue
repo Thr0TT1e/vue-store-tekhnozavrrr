@@ -106,12 +106,12 @@ export default {
     decrement() {
       this.changeProductAmount({
                                  productId: this.item.productId,
-                                 amount:    this.item.amount === 0 ? 0 : this.item.amount - 1,
+                                 amount:    this.item.amount <= 1 ? 1 : this.item.amount - 1,
                                })
     },
     
     negativeMeaning(event) {
-      this.amount = Math.max(0, parseInt(event.target.value) || 0)
+      this.amount = Math.max(1, parseInt(event.target.value))
     },
   },
 }
