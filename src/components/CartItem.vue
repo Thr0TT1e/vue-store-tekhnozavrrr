@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { mapMutations, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'CartItem',
@@ -94,8 +94,7 @@ export default {
   },
   
   methods: {
-    ...mapMutations({deleteProduct: 'deleteProductToCart'}),
-    ...mapActions(['changeProductAmount']),
+    ...mapActions({deleteProduct: 'deleteProductToCart', changeProductAmount: 'changeProductAmount'}),
     
     increment() {
       this.changeProductAmount({

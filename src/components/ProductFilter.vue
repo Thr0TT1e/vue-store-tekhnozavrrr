@@ -38,7 +38,8 @@
                 :value="category.id"
                 v-for="category in categoryList"
                 :key="category.id"
-            >{{ category.title }}</option>
+            >{{ category.title }}
+            </option>
           </select>
         </label>
       </fieldset>
@@ -48,7 +49,7 @@
         <ul class="colors">
           <li
               class="colors__item"
-              v-for="color in colorList"
+              v-for="color in colorsData"
               :key="color.id"
           >
             <label class="colors__label">
@@ -56,12 +57,12 @@
                   class="colors__radio sr-only"
                   type="radio"
                   name="color"
-                  :value="color.color"
+                  :value="color.id"
                   v-model="currentColor"
               >
               <span
                   class="colors__value"
-                  :style="`background-color: ${color.color};`"
+                  :style="`background-color: ${color.code};`"
               >
                   </span>
             </label>
@@ -160,37 +161,43 @@ export default {
       currentPriceFrom:  0,
       currentPriceTo:    0,
       currentCategoryId: 0,
-      currentColor: '',
-      
+      currentColor:      '',
+
       categoriesData: null,
+      colorsData:     null,
     }
   },
-  
+
   created() {
     this.loadCategories()
+    this.loadColors()
   },
-  
+
   computed: {
     categoryList() {
       return this.categoriesData ? this.categoriesData.items : []
     },
 
     colorList() {
-      return this.selectColor
+      return this.selectColor ? this.selectColor : []
     },
   },
 
   watch: {
     priceFrom(value) {
-      this.currentPriceFrom  = value
+      this.currentPriceFrom = value
     },
 
     priceTo(value) {
-      this.currentPriceTo    = value
+      this.currentPriceTo = value
     },
 
     categoryId(value) {
       this.currentCategoryId = value
+    },
+
+    selectColor(value) {
+      this.currentColor = value
     },
   },
 
@@ -209,10 +216,17 @@ export default {
       this.$emit('update:categoryId', 0)
       this.$emit('update:selectColor', '')
     },
-    
+
     loadCategories() {
       axios.get(`${this.API_BASE_URL}/api/productCategories`)
            .then(res => this.categoriesData = res.data)
+           .catch(err => console.log('loadCategories -> ', err))
+    },
+
+    loadColors() {
+      axios.get(`${this.API_BASE_URL}/api/colors`)
+           .then(res => this.colorsData = res.data.items)
+           .catch(err => console.log('loadColors -> ', err))
     },
   },
 }

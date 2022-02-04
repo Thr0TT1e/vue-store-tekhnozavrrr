@@ -6,9 +6,11 @@ const store = createStore(
   {
     state() {
       return {
-        cartProducts:     [],
-        userAccessKey:    null,
-        cartProductsData: [],
+        cartProducts:         [],
+        userAccessKey:        null,
+        cartProductsData:     [],
+        productLoading:       false,
+        productLoadingFailed: false,
       }
     },
 
@@ -53,16 +55,27 @@ const store = createStore(
 
     actions: {
       addProductToCart({commit, state}, product) {
-        return axios.post(`${API_BASE_URL}/api/baskets/products`, {
-                            productId: product.productId,
-                            quantity:  product.amount,
-                          },
-                          {
-                            params: {
-                              userAccessKey: state.userAccessKey,
-                            },
-                          })
-                    .then(res => commit('updateProductCart', res.data.items))
+        state.productLoading = true
+        state.productLoadingFailed = false
+
+        clearTimeout(this.loadProductsTimer)
+        this.loadProductsTimer = setTimeout(() => {
+          return axios.post(`${API_BASE_URL}/api/baskets/products`, {
+              productId: product.productId,
+              quantity:  product.amount,
+            },
+            {
+              params: {
+                userAccessKey: state.userAccessKey,
+              },
+            })
+                      .then(res => commit('updateProductCart', res.data.items))
+                      .catch(err => {
+                        state.productLoadingFailed = false
+                        console.log('addProductToCart -> ', err)
+                      })
+                      .then(() => state.productLoading = false)
+        }, 5000)
       },
 
       changeProductAmount({commit, state}, product) {
@@ -76,36 +89,45 @@ const store = createStore(
                            },
                          })
                     .then(res => commit('updateProductCart', res.data.items))
+                    .catch(err => console.log('changeProductAmount -> ', err))
       },
 
       deleteProductToCart({commit, state}, productId) {
         return axios.delete(`${API_BASE_URL}/api/baskets/products`, {
-                              productId: productId,
-                            },
-                            {
-                              params: {
-                                userAccessKey: state.userAccessKey,
-                              },
+                              data: {productId: productId},
+            params: {
+              userAccessKey: state.userAccessKey,
+            },
                             })
                     .then(res => commit('updateProductCart', res.data.items))
+                    .catch(err => console.log('deleteProductToCart -> ', err))
       },
 
       fetchLoadCart({commit, state}) {
-        return axios.get(`${API_BASE_URL}/api/baskets`, {
-          params: {
-            userAccessKey: state.userAccessKey,
-          },
-        })
-                    .then(res => {
-                      if (!state.userAccessKey) {
-                        localStorage.setItem('userAccessKey', res.data.user.accessKey)
-                        commit('updateUserKey', res.data.user.accessKey)
-                      }
+        state.productLoading = true
+        state.productLoadingFailed = false
 
-                      commit('updateProductCart', res.data.items)
-                      // commit('syncCartProducts')
-                    })
-                    .catch(err => console.log('fetchLoadCart -> ', err))
+        clearTimeout(this.loadProductsTimer)
+        this.loadProductsTimer = setTimeout(() => {
+          return axios.get(`${API_BASE_URL}/api/baskets`, {
+            params: {
+              userAccessKey: state.userAccessKey,
+            },
+          })
+                      .then(res => {
+                        if (!state.userAccessKey) {
+                          localStorage.setItem('userAccessKey', res.data.user.accessKey)
+                          commit('updateUserKey', res.data.user.accessKey)
+                        }
+
+                        commit('updateProductCart', res.data.items)
+                      })
+                      .catch(err => {
+                        state.productLoadingFailed = true
+                        console.log('fetchLoadCart -> ', err)
+                      })
+                      .then(() => state.productLoading = false)
+        }, 5000)
       },
     },
   })

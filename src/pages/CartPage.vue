@@ -23,13 +23,22 @@
     </div>
     
     <section class="cart">
+
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
           <ul class="cart__list">
+
+            <li class="catalog__spiner" v-if="productLoading"><img src="img/svg/25.svg"></li>
+
+            <li class="catalog__spiner" v-if="productLoadingFailed">
+              Произошла ошибка при загрузке товаров!
+            </li>
+
             <CartItem
                 v-for="item in products"
                 :key="item.productId"
                 :item="item"
+                v-else
             />
           </ul>
         </div>
@@ -53,8 +62,7 @@
 
 <script>
 import CartItem from '@/components/CartItem.vue';
-
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 export default {
   name: 'CartPage',
@@ -69,10 +77,13 @@ export default {
                     totalPrice:  'cartTotalPrice',
                     amountTotal: 'amountProduct',
                   }),
+    ...mapState({productLoading: 'productLoading', productLoadingFailed: 'productLoadingFailed'})
   },
 }
 </script>
 
 <style scoped>
-
+.catalog__spiner {
+  text-align: center;
+}
 </style>

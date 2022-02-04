@@ -49,7 +49,7 @@ export default {
   
   data() {
     return {
-      colorD: '#73B6EA',
+      colorD: '',
     }
   },
 }
