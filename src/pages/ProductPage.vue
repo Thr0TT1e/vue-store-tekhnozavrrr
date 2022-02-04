@@ -1,5 +1,10 @@
 <template>
-  <main class="content container">
+  <main class="content container catalog__spiner" v-if="productLoading"><img src="img/svg/25.svg"></main>
+  <main class="content container" v-else-if="productLoadingFailed">
+    Произошла ошибка при загрузке товаров!
+    <button @click.prevent="loadProduct">Попробовать ещё раз</button>
+  </main>
+  <main class="content container" v-else>
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
@@ -7,7 +12,7 @@
         </li>
         <li class="breadcrumbs__item">
           <router-link class="breadcrumbs__link" :to="{name: 'Main'}">
-            {{ category.title }}
+            {{ product.category.title }}
           </router-link>
         </li>
         <li class="breadcrumbs__item">
@@ -159,10 +164,15 @@
               <button
                   class="button button--primery"
                   type="submit"
+                  :disabled="productAddSending"
               >
                 В корзину
               </button>
             </div>
+            
+            <div v-show="productAdded">Товар добавлен в корзину!</div>
+            <div v-show="productAddSending">Добавляем товар в корзину...</div>
+          
           </form>
         </div>
       </div>
@@ -232,37 +242,44 @@
 </template>
 
 <script>
-import products from '@/data/products.js';
-import categories from '@/data/categories.js';
+import axios from 'axios';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'ProductPage',
-
+  
   data() {
     return {
-      productAmount: 1,
+      productAmount:        1,
+      productsData:         null,
+      productLoading:       false,
+      productLoadingFailed: false,
+      productAdded:         false,
+      productAddSending:    false,
     }
   },
   
   computed: {
     product() {
-      return products.find(product => product.id === +this.$route.params.id)
+      return Object.assign({}, this.productsData, {image: this.productsData.image.file.url})
     },
     
     category() {
-      return categories.find(category => category.id === this.product.categoryId)
+      return this.productsData.category
     },
   },
   
   methods: {
+    ...mapActions(['addProductToCart']),
+    
     gotoPage() {
       this.$emit('gotoPage', 'main')
     },
-
+    
     increment() {
       this.productAmount++
     },
-
+    
     decrement() {
       this.productAmount = Math.max(0, this.productAmount - 1)
     },
@@ -270,17 +287,47 @@ export default {
     negativeMeaning(event) {
       this.productAmount = Math.max(0, parseInt(event.target.value))
     },
-
+    
     addToCart() {
-      this.$store.dispatch('addProductToCart', {
-        productId: this.product.id,
-        amount: this.productAmount
-      })
+      this.productAdded      = false
+      this.productAddSending = true
+      
+      this.addProductToCart({
+                              productId: this.product.id,
+                              amount:    this.productAmount,
+                            })
+          .then(() => {
+            this.productAdded      = true
+            this.productAddSending = false
+          })
+    },
+    
+    loadProduct() {
+      this.productLoading       = true
+      this.productLoadingFailed = false
+      
+      axios.get(`${this.API_BASE_URL}/api/products/${this.$route.params.id}`)
+           .then(res => this.productsData = res.data)
+           .catch(() => this.productLoadingFailed = true)
+           .then(() => this.productLoading = false)
+    },
+  },
+  
+  watch: {
+    '$route.params.id': {
+      handler() {
+        this.loadProduct()
+      },
+      immediate: true,
     },
   },
 }
 </script>
 
 <style scoped>
-
+.catalog__spiner {
+  display:            grid;
+  grid-template-rows: 400px;
+  place-items:        center;
+}
 </style>

@@ -1,28 +1,25 @@
 import { createStore } from 'vuex';
-import products from '@/data/products';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config.js';
 
-const store = createStore({
-  state() {
-    return {
-      cartProducts: [
-        {
-          productId: 1,
-          amount: 2
-        }
-      ],
-
-    }
-  },
-
-  getters: {
-    cartDetailsProduct(state) {
-      return state.cartProducts.map(product => {
-        return {
-          ...product,
-          product: products.find(item => item.id === product.productId)
-        }
-      })
+const store = createStore(
+  {
+    state() {
+      return {
+        cartProducts:         [],
+        userAccessKey:        null,
+        cartProductsData:     [],
+        productLoading:       false,
+        productLoadingFailed: false,
+      }
     },
+
+    getters: {
+      cartDetailsProduct(state) {
+        if (state.cartProducts) {
+          return state.cartProducts
+        }
+      },
 
     cartTotalPrice(state, getters) {
       return getters.cartDetailsProduct.reduce((acc, item) => acc + item.product.price * item.amount, 0)
@@ -33,38 +30,106 @@ const store = createStore({
     },
   },
 
-  mutations: {
-    addProduct(state, payload) {
-      let item = state.cartProducts.find(item => item.productId === payload.productId)
+    mutations: {
+      // Обновление ключа пользователя
+      updateUserKey(state, key) {
+        state.userAccessKey = key
+      },
 
-      if (item) item.amount += payload.amount
-      else state.cartProducts.push(payload)
+      // Обновление товаров в корзине
+      updateProductCart(state, items) {
+        if (items.length) {
+          state.cartProducts = items.map(item => {
+            return {
+              productId: item.product.id,
+              product:   Object.assign({}, item.product, {image: item.product.image.file.url}),
+              amount:    item.quantity,
+            }
+          })
+        }
+        else {
+          state.cartProducts = items
+        }
+      },
     },
 
-    changeAmount(state, payload) {
-      let item = state.cartProducts.find(item => item.productId === payload.productId)
+    actions: {
+      addProductToCart({commit, state}, product) {
+        state.productLoading = true
+        state.productLoadingFailed = false
 
-      if (item) item.amount = payload.amount
-    },
+        clearTimeout(this.loadProductsTimer)
+        this.loadProductsTimer = setTimeout(() => {
+          return axios.post(`${API_BASE_URL}/api/baskets/products`, {
+              productId: product.productId,
+              quantity:  product.amount,
+            },
+            {
+              params: {
+                userAccessKey: state.userAccessKey,
+              },
+            })
+                      .then(res => commit('updateProductCart', res.data.items))
+                      .catch(err => {
+                        state.productLoadingFailed = false
+                        console.log('addProductToCart -> ', err)
+                      })
+                      .then(() => state.productLoading = false)
+        }, 5000)
+      },
 
-    deleteProductToCart(state, productId) {
-      state.cartProducts = state.cartProducts.filter(product => product.productId !== productId)
-    },
-  },
+      changeProductAmount({commit, state}, product) {
+        return axios.put(`${API_BASE_URL}/api/baskets/products`, {
+                           productId: product.productId,
+                           quantity:  product.amount,
+                         },
+                         {
+                           params: {
+                             userAccessKey: state.userAccessKey,
+                           },
+                         })
+                    .then(res => commit('updateProductCart', res.data.items))
+                    .catch(err => console.log('changeProductAmount -> ', err))
+      },
 
-  actions: {
-    addProductToCart({commit}, product) {
-      commit('addProduct', product)
-    },
+      deleteProductToCart({commit, state}, productId) {
+        return axios.delete(`${API_BASE_URL}/api/baskets/products`, {
+                              data: {productId: productId},
+            params: {
+              userAccessKey: state.userAccessKey,
+            },
+                            })
+                    .then(res => commit('updateProductCart', res.data.items))
+                    .catch(err => console.log('deleteProductToCart -> ', err))
+      },
 
-    changeProductAmount({commit}, amount) {
-      commit('changeAmount', amount)
-    },
+      fetchLoadCart({commit, state}) {
+        state.productLoading = true
+        state.productLoadingFailed = false
 
-    deleteProductToCart({commit}, productId) {
-      commit('deleteProductToCart', productId)
+        clearTimeout(this.loadProductsTimer)
+        this.loadProductsTimer = setTimeout(() => {
+          return axios.get(`${API_BASE_URL}/api/baskets`, {
+            params: {
+              userAccessKey: state.userAccessKey,
+            },
+          })
+                      .then(res => {
+                        if (!state.userAccessKey) {
+                          localStorage.setItem('userAccessKey', res.data.user.accessKey)
+                          commit('updateUserKey', res.data.user.accessKey)
+                        }
+
+                        commit('updateProductCart', res.data.items)
+                      })
+                      .catch(err => {
+                        state.productLoadingFailed = true
+                        console.log('fetchLoadCart -> ', err)
+                      })
+                      .then(() => state.productLoading = false)
+        }, 5000)
+      },
     },
-  },
-})
+  })
 
 export default store

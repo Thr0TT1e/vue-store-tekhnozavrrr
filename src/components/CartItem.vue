@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
+import { mapActions } from 'vuex';
 
 export default {
   name: 'CartItem',
@@ -85,31 +85,31 @@ export default {
       },
       
       set(value) {
-        this.$store.dispatch('changeProductAmount', {
-          productId: this.item.productId,
-          amount: value
-        })
+        this.changeProductAmount({
+                                   productId: this.item.productId,
+                                   amount:    value,
+                                 })
       },
     },
   },
   
   methods: {
-    ...mapMutations({deleteProduct: 'deleteProductToCart'}),
+    ...mapActions({deleteProduct: 'deleteProductToCart', changeProductAmount: 'changeProductAmount'}),
     
     increment() {
-      this.$store.dispatch('changeProductAmount', {
-        productId: this.item.productId,
-        amount: this.item.amount + 1
-      })
+      this.changeProductAmount({
+                                 productId: this.item.productId,
+                                 amount:    this.item.amount + 1,
+                               })
     },
     
     decrement() {
-      this.$store.dispatch('changeProductAmount', {
-        productId: this.item.productId,
-        amount: this.item.amount === 0 ? 0 : this.item.amount - 1
-      })
+      this.changeProductAmount({
+                                 productId: this.item.productId,
+                                 amount:    this.item.amount === 0 ? 0 : this.item.amount - 1,
+                               })
     },
-
+    
     negativeMeaning(event) {
       this.amount = Math.max(0, parseInt(event.target.value) || 0)
     },
