@@ -5,7 +5,7 @@
         :type="type"
         :placeholder="placeholder"
         :value="dataValue"
-        @input="formUpdate($event.target.value)"
+        @input="formUpdate"
     >
   </BaseFormField>
 </template>

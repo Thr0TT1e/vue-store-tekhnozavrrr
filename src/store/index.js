@@ -51,6 +51,10 @@ const store = createStore(
           state.cartProducts = items
         }
       },
+
+      resetProductCart(state, payload) {
+        state.cartProducts = payload
+      },
     },
 
     actions: {
@@ -75,7 +79,7 @@ const store = createStore(
                         console.log('addProductToCart -> ', err)
                       })
                       .then(() => state.productLoading = false)
-        }, 5000)
+        }, 0)
       },
 
       changeProductAmount({commit, state}, product) {
@@ -127,7 +131,11 @@ const store = createStore(
                         console.log('fetchLoadCart -> ', err)
                       })
                       .then(() => state.productLoading = false)
-        }, 5000)
+        }, 0)
+      },
+
+      cleanProductCart({commit}) {
+        commit('resetProductCart', [])
       },
     },
   })

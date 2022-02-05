@@ -10,8 +10,8 @@ export default {
   },
 
   methods: {
-    formUpdate(value) {
-      this.$emit('update:dataValue', value)
+    formUpdate(event) {
+      this.$emit('update:dataValue', event.target.value)
     },
   },
 }

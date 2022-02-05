@@ -28,7 +28,12 @@
     </div>
     
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <form
+          class="cart__form form"
+          action="#"
+          method="POST"
+          @submit.prevent="order"
+      >
         <div class="cart__field">
           <div class="cart__data">
             
@@ -64,9 +69,9 @@
             
             <BaseFormTextarea
                 title="Комментарий к заказу"
-                :error="formError.comments"
                 placeholder="Ваши пожелания"
-                v-model:data-value="formData.comments"
+                :error="formError.comment"
+                v-model:data-value="formData.comment"
             />
           </div>
           
@@ -141,10 +146,13 @@
             Оформить заказ
           </button>
         </div>
-        <div class="cart__error form__error-block">
+        <div
+            class="cart__error form__error-block"
+            v-if="formErrorMessage"
+        >
           <h4>Заявка не отправлена!</h4>
           <p>
-            Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
+            {{ formErrorMessage }}
           </p>
         </div>
       </form>
@@ -153,22 +161,50 @@
 </template>
 
 <script>
+import axios from 'axios';
 import BaseFormText from '@/components/BaseFormText.vue';
 import BaseFormTextarea from '@/components/BaseFormTextarea.vue';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'OrderPage',
   
   components: {
     BaseFormText,
-    BaseFormTextarea
+    BaseFormTextarea,
   },
   
   data() {
     return {
-      formData: {},
-      formError: {},
+      formData:         {},
+      formError:        {},
+      formErrorMessage: '',
     }
+  },
+  
+  methods: {
+    ...mapActions(['cleanProductCart']),
+    
+    order() {
+      this.formError        = {}
+      this.formErrorMessage = ''
+      
+      axios.post(`${this.API_BASE_URL}/api/orders`,
+                 {
+                   ...this.formData,
+                 },
+                 {
+                   params: {
+                     userAccessKey: this.$store.state.userAccessKey,
+                   },
+                 },
+      )
+           .then(() => this.cleanProductCart())
+           .catch(err => {
+             this.formError        = err.response.data.error.request || {}
+             this.formErrorMessage = err.response.data.error.message || ''
+           })
+    },
   },
 }
 </script>

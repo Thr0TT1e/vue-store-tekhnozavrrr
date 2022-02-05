@@ -4,7 +4,7 @@
         class="form__input form__input--area"
         :placeholder="placeholder"
         :value="dataValue"
-        @input="formUpdate($event.target.value)"
+        @input="formUpdate"
     />
   </BaseFormField>
 </template>
