@@ -11,6 +11,7 @@ const store = createStore(
         cartProductsData:     [],
         productLoading:       false,
         productLoadingFailed: false,
+        orderInfo:            {},
       }
     },
 
@@ -21,14 +22,19 @@ const store = createStore(
         }
       },
 
-    cartTotalPrice(state, getters) {
-      return getters.cartDetailsProduct.reduce((acc, item) => acc + item.product.price * item.amount, 0)
-    },
+      cartTotalPrice(state, getters) {
+        return getters.cartDetailsProduct.reduce((acc, item) => acc + item.product.price * item.amount, 0)
+      },
 
-    amountProduct(state, getters) {
-      return getters.cartDetailsProduct.reduce((acc, item) => item.amount + acc, 0)
+      amountProduct(state, getters) {
+        return getters.cartDetailsProduct.reduce((acc, item) => item.amount + acc, 0)
+      },
+
+      resOrderInfo(state) {
+        let amountAll = state.orderInfo.basket.items.reduce((acc, item) => acc + item.quantity, 0)
+        return Object.assign({}, state.orderInfo, {amount: amountAll})
+      },
     },
-  },
 
     mutations: {
       // Обновление ключа пользователя
@@ -54,6 +60,14 @@ const store = createStore(
 
       resetProductCart(state, payload) {
         state.cartProducts = payload
+      },
+
+      syncOrderInfo(state, payload) {
+        state.orderInfo = payload
+      },
+
+      loadOrderInfo(state, data) {
+        state.orderInfo = data
       },
     },
 
@@ -136,6 +150,22 @@ const store = createStore(
 
       cleanProductCart({commit}) {
         commit('resetProductCart', [])
+      },
+
+      addOrderInfo({commit}, data) {
+        commit('syncOrderInfo', data)
+      },
+
+      fetchOrderInfo({commit, state}, orderId) {
+
+        console.log("orderId ->", orderId);
+        return axios.get(`${API_BASE_URL}/api/orders/${orderId}`, {
+          params: {
+            userAccessKey: state.userAccessKey,
+          },
+        })
+             .then(res => commit('loadOrderInfo', res.data))
+             .catch(err => console.log('fetchOrderInfo => ', err))
       },
     },
   })

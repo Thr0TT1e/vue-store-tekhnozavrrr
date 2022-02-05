@@ -55,6 +55,7 @@
               tag="button"
               class="cart__button button button--primery"
               type="submit"
+              v-if="products.length !== 0"
               :to="{ name: 'Order' }"
           >
             Оформить заказ
