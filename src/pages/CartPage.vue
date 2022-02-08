@@ -51,9 +51,15 @@
             Итого: <span>{{ totalPrice.toLocaleString() }} ₽</span>
           </p>
           
-          <button class="cart__button button button--primery" type="submit">
+          <router-link
+              tag="button"
+              class="cart__button button button--primery"
+              type="submit"
+              v-if="products.length !== 0"
+              :to="{ name: 'Order' }"
+          >
             Оформить заказ
-          </button>
+          </router-link>
         </div>
       </form>
     </section>

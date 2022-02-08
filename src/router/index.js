@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from '@/pages/MainPage';
 import ProductPage from '@/pages/ProductPage';
 import CartPage from '@/pages/CartPage';
+import OrderPage from '@/pages/OrderPage.vue';
+import OrderInfoPage from '@/pages/OrderInfoPage.vue';
 import NotFoundPage from '@/pages/404';
 
 const routes = [
@@ -19,6 +21,16 @@ const routes = [
     path: '/cart',
     name: 'Cart',
     component: CartPage
+  },
+  {
+    path: '/order',
+    name: 'Order',
+    component: OrderPage
+  },
+  {
+    path: '/order/:id',
+    name: 'OrderInfo',
+    component: OrderInfoPage
   },
   {
     path: '/:pathMatch(.*)*',
