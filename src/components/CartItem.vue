@@ -104,10 +104,12 @@ export default {
     },
     
     decrement() {
-      this.changeProductAmount({
-                                 productId: this.item.productId,
-                                 amount:    this.item.amount <= 1 ? 1 : this.item.amount - 1,
-                               })
+      if (this.item.amount > 1) {
+        this.changeProductAmount({
+                                   productId: this.item.productId,
+                                   amount:    this.item.amount <= 1 ? 1 : this.item.amount - 1,
+                                 })
+      }
     },
     
     negativeMeaning(event) {

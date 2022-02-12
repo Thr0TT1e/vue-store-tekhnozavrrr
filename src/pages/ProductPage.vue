@@ -251,7 +251,7 @@ export default {
   data() {
     return {
       productAmount:        1,
-      productsData:         null,
+      productsData:         {},
       productLoading:       false,
       productLoadingFailed: false,
       productAdded:         false,
@@ -305,11 +305,13 @@ export default {
     loadProduct() {
       this.productLoading       = true
       this.productLoadingFailed = false
-      
-      axios.get(`${this.API_BASE_URL}/api/products/${this.$route.params.id}`)
-           .then(res => this.productsData = res.data)
-           .catch(() => this.productLoadingFailed = true)
-           .then(() => this.productLoading = false)
+  
+      if (this.$route.params.id) {
+        axios.get(`${this.API_BASE_URL}/api/products/${this.$route.params.id}`)
+             .then(res => this.productsData = res.data)
+             .catch(() => this.productLoadingFailed = true)
+             .then(() => this.productLoading = false)
+      }
     },
   },
   

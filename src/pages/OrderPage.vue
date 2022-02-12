@@ -219,6 +219,7 @@ export default {
              this.formError        = err.response.data.error.request || {}
              this.formErrorMessage = err.response.data.error.message || ''
            })
+           .then(() => this.productLoading = false)
     },
   },
 }
