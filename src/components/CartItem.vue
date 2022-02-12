@@ -85,10 +85,18 @@ export default {
       },
       
       set(value) {
-        this.changeProductAmount({
-                                   productId: this.item.productId,
-                                   amount:    value,
-                                 })
+        if (value) {
+          this.changeProductAmount({
+                                     productId: this.item.productId,
+                                     amount:    value,
+                                   })
+        }
+        else {
+          this.changeProductAmount({
+                                     productId: this.item.productId,
+                                     amount:    1,
+                                   })
+        }
       },
     },
   },
@@ -107,7 +115,7 @@ export default {
       if (this.item.amount > 1) {
         this.changeProductAmount({
                                    productId: this.item.productId,
-                                   amount:    this.item.amount <= 1 ? 1 : this.item.amount - 1,
+                                   amount:    Math.max(1, this.item.amount - 1),
                                  })
       }
     },

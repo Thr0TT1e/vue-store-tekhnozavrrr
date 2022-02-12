@@ -42,6 +42,14 @@ const store = createStore(
         state.userAccessKey = key
       },
 
+      updateCartProductsAmount(state, payload) {
+          const item = state.cartProducts.find(product => product.id === payload.productId)
+
+          if (item) {
+            item.amount = payload.amount
+          }
+      },
+
       // Обновление товаров в корзине
       updateProductCart(state, items) {
         if (items.length) {
@@ -56,6 +64,10 @@ const store = createStore(
         else {
           state.cartProducts = items
         }
+      },
+
+      deleteProductCart(state, productId) {
+        state.cartProducts = state.cartProducts.filter(product => product.id !== productId)
       },
 
       resetProductCart(state, payload) {
@@ -97,6 +109,12 @@ const store = createStore(
       },
 
       changeProductAmount({commit, state}, product) {
+        if (product.amount < 1) {
+          return
+        }
+
+        commit('updateCartProductsAmount', product)
+
         return axios.put(`${API_BASE_URL}/api/baskets/products`, {
                            productId: product.productId,
                            quantity:  product.amount,
@@ -111,6 +129,8 @@ const store = createStore(
       },
 
       deleteProductToCart({commit, state}, productId) {
+        commit('deleteProductCart', productId)
+
         return axios.delete(`${API_BASE_URL}/api/baskets/products`, {
                               data: {productId: productId},
             params: {
