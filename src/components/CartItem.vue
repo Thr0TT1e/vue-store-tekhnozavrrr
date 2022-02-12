@@ -92,10 +92,7 @@ export default {
                                    })
         }
         else {
-          this.changeProductAmount({
-                                     productId: this.item.productId,
-                                     amount:    1,
-                                   })
+          return;
         }
       },
     },
